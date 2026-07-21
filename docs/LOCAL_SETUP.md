@@ -31,10 +31,17 @@ Use environment variables for local config where needed:
 - `DB_USERNAME`
 - `DB_PASSWORD`
 - `JWT_SECRET`
+- `JWT_EXPIRATION_MS`
 - `ADMIN_EMAIL`
 - `ADMIN_PASSWORD`
 - `FLYWAY_ENABLED`
 - `FLYWAY_BASELINE_ON_MIGRATE`
+
+Local profile defaults:
+- `SPRING_PROFILES_ACTIVE=local`
+- `APP_DOCS_ENABLED=true`
+- `APP_ADMIN_BOOTSTRAP_ENABLED=false` (admin bootstrap is off unless explicitly enabled)
+- `APP_CORS_ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173`
 
 ## 4. Start Backend
 - `cd backend`
@@ -55,6 +62,10 @@ Open a second terminal:
 - Backend health: `curl http://localhost:8080/actuator/health`
 - Frontend URL: `http://localhost:5173`
 - Swagger UI: `http://localhost:8080/swagger-ui.html`
+
+Local CORS note:
+- Both local frontend origins are supported by default: `http://localhost:5173` and `http://127.0.0.1:5173`.
+- Use `APP_CORS_ALLOWED_ORIGINS` to override as a comma-separated exact-origin list.
 
 ## 7. Test/Quality Commands
 - Backend: `cd backend && mvn clean test`
@@ -86,9 +97,15 @@ Optional data reset:
 ## 11. Troubleshooting
 - 401/403 on protected APIs: verify Bearer token and role.
 - DB connection failures: confirm Docker container health and 3307 availability.
-- CORS issues in local dev: ensure frontend runs on `http://localhost:5173`.
+- CORS issues in local dev: ensure frontend runs on `http://localhost:5173` or `http://127.0.0.1:5173`.
 - Startup inconsistency after code changes: run stale-class fix sequence above.
 - Swagger unavailable: ensure backend started successfully and actuator health is UP.
+
+## Controlled Admin Bootstrap
+- Administrator bootstrap is an explicit setup operation controlled by `APP_ADMIN_BOOTSTRAP_ENABLED`.
+- Keep bootstrap disabled (`false`) for normal local development and after an administrator already exists.
+- When enabling bootstrap, provide nonblank `ADMIN_EMAIL` and `ADMIN_PASSWORD`.
+- After bootstrap succeeds, set `APP_ADMIN_BOOTSTRAP_ENABLED=false` again.
 
 ## 12. Flyway Phase A Database Paths
 

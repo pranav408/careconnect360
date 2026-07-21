@@ -14,5 +14,10 @@ spring:
 app:
   jwt:
     secret: dGVzdC1qd3Qtc2VjcmV0LWNvbXBhdGlibGUtd2l0aC1iYXNlNjQ=
+  cors:
+    allowed-origins: http://localhost:5173,http://127.0.0.1:5173
   admin:
+    bootstrap:
+      enabled: false
+    email: admin-test@careconnect360.local
     password: test-admin-password

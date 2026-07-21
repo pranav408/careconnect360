@@ -86,6 +86,25 @@ flowchart LR
 - Swagger UI: localhost:8080/swagger-ui.html
 - Health endpoint: localhost:8080/actuator/health
 
+## Runtime Profiles and Environment Separation
+- Shared baseline configuration is in `application.yml` and contains production-safe defaults only.
+- Local development uses `SPRING_PROFILES_ACTIVE=local` with:
+  - `APP_DOCS_ENABLED=true`
+  - `APP_ADMIN_BOOTSTRAP_ENABLED=false` by default
+  - `APP_CORS_ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173`
+  - Actuator web exposure `health,info` and health details visible for local troubleshooting.
+- Production uses `SPRING_PROFILES_ACTIVE=prod` with:
+  - `APP_DOCS_ENABLED=false`
+  - `APP_ADMIN_BOOTSTRAP_ENABLED=false`
+  - Actuator exposure limited to `health` and health details hidden.
+  - CORS restricted to exact configured origins only (no wildcard support).
+- Same-origin reverse-proxy deployments can keep `APP_CORS_ALLOWED_ORIGINS` empty because browser CORS is not needed for same-origin calls.
+
+## Controlled Administrator Bootstrap
+- Admin bootstrap is disabled by default in all shared/local/prod profiles and is enabled only as an explicit setup operation.
+- When enabled, both `ADMIN_EMAIL` and `ADMIN_PASSWORD` must be nonblank or startup fails with a configuration error.
+- After the administrator account exists, bootstrap should be turned off again.
+
 ## Migration Policy
 - Applied versioned migrations are immutable.
 - Future schema changes must be introduced through new migrations (`V2+`).

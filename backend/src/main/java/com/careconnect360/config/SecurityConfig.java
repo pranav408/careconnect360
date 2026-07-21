@@ -1,7 +1,12 @@
 package com.careconnect360.config;
 
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -32,13 +37,16 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final String allowedOriginsProperty;
 
     public SecurityConfig(
             CustomUserDetailsService userDetailsService,
-            JwtAuthenticationFilter jwtAuthenticationFilter) {
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            @Value("${app.cors.allowed-origins:}") String allowedOriginsProperty) {
 
         this.userDetailsService = userDetailsService;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.allowedOriginsProperty = allowedOriginsProperty;
     }
 
     @Bean
@@ -140,8 +148,7 @@ public class SecurityConfig {
         CorsConfiguration configuration =
                 new CorsConfiguration();
 
-        configuration.setAllowedOrigins(
-                List.of("http://localhost:5173"));
+        configuration.setAllowedOrigins(parseAllowedOrigins(allowedOriginsProperty));
 
         configuration.setAllowedMethods(
                 List.of(
@@ -157,13 +164,13 @@ public class SecurityConfig {
                 List.of(
                     "Authorization",
                     "Content-Type",
-                    "Accept"
+                    "Accept",
+                    "Origin",
+                    "X-Requested-With"
                 ));
 
-        configuration.setExposedHeaders(
-                List.of("Authorization"));
-
-        configuration.setAllowCredentials(true);
+            configuration.setAllowCredentials(false);
+            configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
@@ -173,5 +180,20 @@ public class SecurityConfig {
                 configuration);
 
         return source;
+    }
+
+    private List<String> parseAllowedOrigins(String configuredOrigins) {
+
+        if (configuredOrigins == null || configuredOrigins.isBlank()) {
+            return List.of();
+        }
+
+        Set<String> deduplicatedOrigins = Arrays.stream(configuredOrigins.split(","))
+                .map(String::trim)
+                .filter(origin -> !origin.isBlank())
+                .filter(origin -> !"*".equals(origin))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return List.copyOf(deduplicatedOrigins);
     }
 }

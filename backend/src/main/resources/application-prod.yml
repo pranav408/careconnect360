@@ -1,0 +1,25 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ${MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE:health}
+
+  endpoint:
+    health:
+      show-details: ${MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS:never}
+
+springdoc:
+  api-docs:
+    enabled: ${APP_DOCS_ENABLED:false}
+  swagger-ui:
+    enabled: ${APP_DOCS_ENABLED:false}
+
+logging:
+  level:
+    org.hibernate.SQL: WARN
+    org.springframework.security: INFO
+
+app:
+  admin:
+    bootstrap:
+      enabled: ${APP_ADMIN_BOOTSTRAP_ENABLED:false}

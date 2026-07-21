@@ -5,6 +5,7 @@ import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,14 @@ import com.careconnect360.auth.enums.AccountStatus;
 import com.careconnect360.auth.enums.UserRole;
 import com.careconnect360.auth.repository.UserRepository;
 
+import jakarta.annotation.PostConstruct;
+
 @Component
+@ConditionalOnProperty(
+        prefix = "app.admin.bootstrap",
+        name = "enabled",
+        havingValue = "true",
+        matchIfMissing = false)
 public class AdminDataInitializer implements CommandLineRunner {
 
     private static final Logger LOGGER =
@@ -38,6 +46,20 @@ public class AdminDataInitializer implements CommandLineRunner {
         this.adminPassword = adminPassword;
     }
 
+        @PostConstruct
+        void validateRequiredConfiguration() {
+
+                if (adminEmail == null || adminEmail.isBlank()) {
+                        throw new IllegalStateException(
+                                        "Administrator bootstrap requires nonblank ADMIN_EMAIL when app.admin.bootstrap.enabled=true");
+                }
+
+                if (adminPassword == null || adminPassword.isBlank()) {
+                        throw new IllegalStateException(
+                                        "Administrator bootstrap requires nonblank ADMIN_PASSWORD when app.admin.bootstrap.enabled=true");
+                }
+        }
+
     @Override
     @Transactional
     public void run(String... args) {
@@ -49,7 +71,7 @@ public class AdminDataInitializer implements CommandLineRunner {
         if (userRepository.existsByEmailIgnoreCase(normalizedEmail)) {
 
             LOGGER.info(
-                    "Default administrator already exists: {}",
+                                        "Administrator already exists, skipping bootstrap create: {}",
                     normalizedEmail);
 
             return;
@@ -72,7 +94,7 @@ public class AdminDataInitializer implements CommandLineRunner {
         userRepository.save(administrator);
 
         LOGGER.info(
-                "Default administrator created successfully: {}",
+                "Administrator bootstrap account created successfully: {}",
                 normalizedEmail);
     }
 }
