@@ -8,3 +8,11 @@ spring:
     hibernate:
       ddl-auto: create-drop
     open-in-view: false
+  flyway:
+    enabled: false
+
+app:
+  jwt:
+    secret: dGVzdC1qd3Qtc2VjcmV0LWNvbXBhdGlibGUtd2l0aC1iYXNlNjQ=
+  admin:
+    password: test-admin-password

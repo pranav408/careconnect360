@@ -2,6 +2,7 @@
 
 ## Entity Model
 The backend defines eight domain tables plus users, with shared primary key strategy from BaseEntity (`id`) and audit fields (`created_at`, `updated_at`).
+Flyway baseline migration `V1__baseline_schema.sql` reproduces this schema for new empty MySQL databases.
 
 ```mermaid
 erDiagram
@@ -162,3 +163,7 @@ erDiagram
 - One claim per appointment is enforced by unique `claims.appointment_id` and claim-existence checks.
 - One payment record per claim is enforced by unique `payments.claim_id` and duplicate-payment checks.
 - One successful-payment-per-claim business result follows because claim is moved to PAID after success and duplicate payment creation is blocked.
+
+## Migration Ownership
+- Versioned schema history is tracked in `flyway_schema_history`.
+- Do not edit applied migrations; add new versioned migrations for schema evolution.

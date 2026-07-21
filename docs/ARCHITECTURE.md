@@ -26,6 +26,8 @@ flowchart LR
 - Role-based authorization via `@PreAuthorize`.
 - Layering: controllers (HTTP), services (business rules), repositories (data access), DTOs (contract boundaries).
 - OpenAPI configuration with bearerAuth security scheme.
+- Flyway is the version-controlled schema owner for MySQL.
+- Hibernate runs with `ddl-auto=validate` in normal runtime to verify schema consistency.
 
 ```mermaid
 flowchart TD
@@ -83,3 +85,8 @@ flowchart LR
 - MySQL: localhost:3307 mapped to container 3306
 - Swagger UI: localhost:8080/swagger-ui.html
 - Health endpoint: localhost:8080/actuator/health
+
+## Migration Policy
+- Applied versioned migrations are immutable.
+- Future schema changes must be introduced through new migrations (`V2+`).
+- Flyway clean is disabled for safety.

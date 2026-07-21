@@ -33,6 +33,8 @@ Use environment variables for local config where needed:
 - `JWT_SECRET`
 - `ADMIN_EMAIL`
 - `ADMIN_PASSWORD`
+- `FLYWAY_ENABLED`
+- `FLYWAY_BASELINE_ON_MIGRATE`
 
 ## 4. Start Backend
 - `cd backend`
@@ -87,3 +89,26 @@ Optional data reset:
 - CORS issues in local dev: ensure frontend runs on `http://localhost:5173`.
 - Startup inconsistency after code changes: run stale-class fix sequence above.
 - Swagger unavailable: ensure backend started successfully and actuator health is UP.
+
+## 12. Flyway Phase A Database Paths
+
+Existing database path (preserve current local data):
+1. Back up the database before first Flyway startup.
+2. Set `FLYWAY_BASELINE_ON_MIGRATE=true` in local `.env` for one startup only.
+3. Start backend: `cd backend && mvn spring-boot:run`.
+4. Confirm `flyway_schema_history` was created.
+5. Stop backend.
+6. Set `FLYWAY_BASELINE_ON_MIGRATE=false` again.
+7. Restart backend and confirm startup validation succeeds.
+
+Empty database path (new environment):
+1. Create a brand-new empty MySQL database.
+2. Keep `FLYWAY_BASELINE_ON_MIGRATE=false`.
+3. Start backend and let Flyway run `V1__baseline_schema.sql`.
+4. Confirm all baseline tables were created and Hibernate validation succeeds.
+
+Rollback and migration safety:
+1. Rollback is done by restoring the pre-Flyway backup, not by editing an applied migration.
+2. Never edit an applied versioned migration.
+3. Add new changes as `V2`, `V3`, and later migrations.
+4. Do not use Flyway clean on valuable databases.
