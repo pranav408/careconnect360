@@ -24,3 +24,8 @@ frontend/dist/
 .DS_Store
 Thumbs.db
 .Rhistory
+COPILOT_MASTER_PROMPT.txt
+README-FIRST.md
+README_FIRST.md
+frontend-old-README.md
+database/backups/
