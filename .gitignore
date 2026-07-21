@@ -3,37 +3,24 @@ backend/target/
 *.class
 *.log
 
-# Eclipse
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# IDEs
+.idea/
+*.iml
+.vscode/
 .metadata/
 .recommenders/
 .settings/
 .classpath
 .project
 
-# IntelliJ
-.idea/
-*.iml
-
-# VS Code
-.vscode/
-
-# Node
-frontend/node_modules/
-frontend/dist/
-
 # Environment and OS
-.env
-.DS_Store
-Thumbs.db
-
-.DS_Store
-backend/target/
-frontend/node_modules/
-frontend/dist/
 .env
 .env.local
 .env.*.local
-*.log
-.idea/
-.vscode/
+.DS_Store
+Thumbs.db
 .Rhistory
