@@ -112,3 +112,9 @@ Rollback and migration safety:
 2. Never edit an applied versioned migration.
 3. Add new changes as `V2`, `V3`, and later migrations.
 4. Do not use Flyway clean on valuable databases.
+
+## 13. Flyway Phase B (V2) Notes
+- `V2__schema_hardening.sql` adds a generated nullable `insurance_policies.active_patient_id` plus unique index `uk_insurance_policies_active_patient` to enforce one `ACTIVE` policy per patient at database level.
+- `V2` also adds performance indexes `idx_appointments_doctor_status_date_time`, `idx_appointments_patient_status_date_time`, and `idx_payments_status_created_at`.
+- Never edit `V1` or `V2` after either migration is applied in any environment.
+- All future schema changes must be introduced as `V3` or later migrations.

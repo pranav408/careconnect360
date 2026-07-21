@@ -142,6 +142,7 @@ erDiagram
 - `doctors.user_id`
 - `doctors.license_number`
 - `insurance_policies.policy_number`
+- `insurance_policies.active_patient_id` (generated column, unique for `ACTIVE` policies only)
 - `claims.appointment_id`
 - `payments.claim_id`
 - `payments.transaction_reference`
@@ -163,7 +164,13 @@ erDiagram
 - One claim per appointment is enforced by unique `claims.appointment_id` and claim-existence checks.
 - One payment record per claim is enforced by unique `payments.claim_id` and duplicate-payment checks.
 - One successful-payment-per-claim business result follows because claim is moved to PAID after success and duplicate payment creation is blocked.
+- At most one active insurance policy per patient is enforced at the database level by generated nullable `active_patient_id` and unique index `uk_insurance_policies_active_patient`.
+
+## V2 Performance Indexes
+- `idx_appointments_doctor_status_date_time` on `(doctor_id, status, appointment_date, appointment_time)` supports doctor status/date/time filtering and ordering queries.
+- `idx_appointments_patient_status_date_time` on `(patient_id, status, appointment_date, appointment_time)` supports patient status/date/time filtering and ordering queries.
+- `idx_payments_status_created_at` on `(status, created_at)` supports status-based payment list/reporting queries ordered by creation time.
 
 ## Migration Ownership
 - Versioned schema history is tracked in `flyway_schema_history`.
-- Do not edit applied migrations; add new versioned migrations for schema evolution.
+- Do not edit applied migrations (including `V1` and `V2`); add new versioned migrations (`V3+`) for schema evolution.

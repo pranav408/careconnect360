@@ -90,3 +90,10 @@ flowchart LR
 - Applied versioned migrations are immutable.
 - Future schema changes must be introduced through new migrations (`V2+`).
 - Flyway clean is disabled for safety.
+
+## Flyway Phase B (V2) Schema Hardening
+- Database-level rule: at most one `ACTIVE` insurance policy per patient is enforced by generated column `insurance_policies.active_patient_id` and unique index `uk_insurance_policies_active_patient`.
+- `idx_appointments_doctor_status_date_time` supports doctor schedule and availability checks, including repository patterns `findByDoctorIdAndStatusInOrderByAppointmentDateAscAppointmentTimeAsc`, `findByDoctorIdAndStatus`, and `existsByDoctorIdAndAppointmentDateAndAppointmentTimeAndStatusIn`.
+- `idx_appointments_patient_status_date_time` supports patient history/upcoming views and conflict checks, including `findByPatientIdAndStatus`, `findUpcomingAppointmentsForPatient`, and `existsByPatientIdAndAppointmentDateAndAppointmentTimeAndStatusIn`.
+- `idx_payments_status_created_at` supports status-based payment retrieval/reporting, including `findByStatusOrderByCreatedAtAsc` and `findByStatus`.
+- Never edit applied migration files (`V1`, `V2`); all future schema changes must be introduced through `V3` or later.
