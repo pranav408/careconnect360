@@ -58,6 +58,14 @@ Open a second terminal:
 - `npm install`
 - `npm run dev`
 
+Frontend API base URL:
+- `VITE_API_BASE_URL` is loaded from frontend environment files (for example `frontend/.env.example`) and represents the complete API root.
+- Fallback/default is `/api` when missing, undefined, empty, or whitespace-only.
+- Local development should keep it unset or set to `/api` so Vite proxy forwards `/api` to `http://localhost:8080`.
+- Split-origin deployment can set `VITE_API_BASE_URL=https://api.example.com/api`.
+- `VITE_API_BASE_URL` is embedded at build time, so changing it requires rebuilding and redeploying the frontend.
+- Never store secrets in `VITE_*` variables (passwords, JWT secrets, database credentials, access tokens, private keys).
+
 ## 6. Verify Health
 - Backend health: `curl http://localhost:8080/actuator/health`
 - Frontend URL: `http://localhost:5173`
@@ -66,6 +74,7 @@ Open a second terminal:
 Local CORS note:
 - Both local frontend origins are supported by default: `http://localhost:5173` and `http://127.0.0.1:5173`.
 - Use `APP_CORS_ALLOWED_ORIGINS` to override as a comma-separated exact-origin list.
+- For split-origin production, `APP_CORS_ALLOWED_ORIGINS` must include the exact frontend origin.
 
 ## 7. Test/Quality Commands
 - Backend: `cd backend && mvn clean test`

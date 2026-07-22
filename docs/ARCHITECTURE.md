@@ -19,6 +19,7 @@ flowchart LR
 - Protected route handling and role route guards.
 - API client modules by domain (auth, doctor, insurance, appointment, claim, payment, notification, dashboards).
 - Vite dev proxy forwards `/api` requests to backend on localhost:8080.
+- Frontend API root is controlled by `VITE_API_BASE_URL` and must represent the complete API root (for example `/api` or `https://api.example.com/api`).
 
 ## Backend
 - Java 17 / Spring Boot 3.5.16 modular monolith.
@@ -99,6 +100,21 @@ flowchart LR
   - Actuator exposure limited to `health` and health details hidden.
   - CORS restricted to exact configured origins only (no wildcard support).
 - Same-origin reverse-proxy deployments can keep `APP_CORS_ALLOWED_ORIGINS` empty because browser CORS is not needed for same-origin calls.
+
+## Frontend Deployment Models
+- Local development:
+  - `VITE_API_BASE_URL` unset or `/api`
+  - Vite proxy routes `/api` to `http://localhost:8080`
+- Same-origin production:
+  - `VITE_API_BASE_URL` unset or `/api`
+  - reverse proxy routes `/api` to backend
+- Split-origin production:
+  - `VITE_API_BASE_URL=https://api.example.com/api`
+  - backend `APP_CORS_ALLOWED_ORIGINS` must include the exact frontend origin
+
+Configuration behavior:
+- `VITE_API_BASE_URL` is embedded at frontend build time, so changing it requires a frontend rebuild/redeploy.
+- Do not store sensitive values in `VITE_*` variables (passwords, JWT secrets, database credentials, access tokens, private keys).
 
 ## Controlled Administrator Bootstrap
 - Admin bootstrap is disabled by default in all shared/local/prod profiles and is enabled only as an explicit setup operation.

@@ -2,9 +2,10 @@ import axios from 'axios'
 import type { AxiosError } from 'axios'
 import { clearAuthStorage, getAuthToken } from '../auth/authStorage'
 import { isApiErrorResponse } from '../types/api'
+import { resolveApiBaseUrl } from './apiBaseUrl'
 
 export const apiClient = axios.create({
-  baseURL: '/api',
+  baseURL: resolveApiBaseUrl(import.meta.env.VITE_API_BASE_URL),
   timeout: 15000,
   headers: {
     Accept: 'application/json',

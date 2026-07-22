@@ -36,6 +36,27 @@ CareConnect360 provides a modular monolith with explicit state transitions and r
 - Local Vite dev proxy from /api to backend at localhost:8080.
 - MySQL containerized for local development.
 
+## Frontend API Base URL Configuration
+- `VITE_API_BASE_URL` is the complete API root used by the frontend at build time.
+- Default/fallback behavior is `/api` when the variable is missing, undefined, empty, or whitespace-only.
+- Valid values:
+   - `/api`
+   - `https://api.example.com/api`
+   - `https://example.com/careconnect/api`
+- Invalid values are rejected during frontend initialization:
+   - absolute origin without `/api` path (for example `https://api.example.com`)
+   - unsupported protocol
+   - query strings or fragments
+
+Deployment models:
+- Local development: keep `VITE_API_BASE_URL` unset or `/api`; Vite proxy forwards `/api` to `http://localhost:8080`.
+- Same-origin production: keep `VITE_API_BASE_URL` unset or `/api`; edge/reverse proxy routes `/api` to backend.
+- Split-origin production: set `VITE_API_BASE_URL=https://api.example.com/api`; backend `APP_CORS_ALLOWED_ORIGINS` must include the exact frontend origin.
+
+Security note:
+- Never place passwords, JWT secrets, tokens, database credentials, or private keys in `VITE_*` variables because they are embedded into the browser bundle.
+- Changing `VITE_API_BASE_URL` requires rebuilding and redeploying the frontend.
+
 ## Application Modules
 - auth
 - patient
