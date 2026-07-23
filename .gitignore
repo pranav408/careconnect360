@@ -29,3 +29,7 @@ README-FIRST.md
 README_FIRST.md
 frontend-old-README.md
 database/backups/
+frontend/.env.e2e
+frontend/playwright-report/
+frontend/test-results/
+frontend/blob-report/
