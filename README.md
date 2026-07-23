@@ -91,6 +91,32 @@ Patient registers and submits insurance, admin activates policy, patient books a
    - `npm install`
    - `npm run dev`
 
+## Full Docker Compose
+Prerequisites:
+- Docker Desktop with Compose support
+- A local `.env` file created from `.env.example`
+
+First-time setup:
+1. Copy `.env.example` to `.env`.
+2. Replace placeholder secrets before starting (`MYSQL_PASSWORD`, `MYSQL_ROOT_PASSWORD`, `JWT_SECRET`).
+3. Keep local Compose CORS as an exact origin with scheme, host, and port only:
+   - `APP_CORS_ALLOWED_ORIGINS=http://localhost:8088`
+4. For real production, replace `APP_CORS_ALLOWED_ORIGINS` with the exact public frontend origin (no wildcard, no trailing slash).
+
+Start all services:
+- `docker compose up --build`
+
+Application URL:
+- `http://localhost:8088`
+
+Useful operations:
+- `docker compose ps`
+- `docker compose logs -f backend`
+- `docker compose down`
+
+Data warning:
+- `docker compose down -v` permanently deletes the MySQL volume data.
+
 ## Test and Quality Commands
 - Backend tests: `cd backend && mvn clean test`
 - Frontend tests: `cd frontend && npm run test`

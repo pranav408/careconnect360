@@ -87,6 +87,22 @@ flowchart LR
 - Swagger UI: localhost:8080/swagger-ui.html
 - Health endpoint: localhost:8080/actuator/health
 
+## Full Docker Compose Runtime Topology
+- Browser -> `http://localhost:8088`
+- Nginx frontend container serves SPA and proxies `/api` to backend service
+- Spring Boot backend runs on internal Compose network at `backend:8080`
+- MySQL runs on internal Compose network at `mysql:3306`
+
+Same-origin API routing:
+- Browser requests `/api/...` to frontend origin.
+- Nginx forwards those requests to `http://backend:8080` without rewriting `/api` path.
+- This keeps browser traffic same-origin for local Docker deployment.
+
+Startup behavior:
+- Backend startup runs Flyway migrations before serving requests.
+- Backend and MySQL remain internal-only to the Compose network.
+- MySQL host port mapping is retained for optional local host access.
+
 ## Runtime Profiles and Environment Separation
 - Shared baseline configuration is in `application.yml` and contains production-safe defaults only.
 - Local development uses `SPRING_PROFILES_ACTIVE=local` with:

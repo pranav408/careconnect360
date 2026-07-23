@@ -43,6 +43,30 @@ Local profile defaults:
 - `APP_ADMIN_BOOTSTRAP_ENABLED=false` (admin bootstrap is off unless explicitly enabled)
 - `APP_CORS_ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173`
 
+## Full Docker Compose Startup (All Services)
+Use this method to run MySQL, backend, and frontend as containers.
+
+1. From project root, ensure `.env` exists:
+   - `cp .env.example .env` (if not already created)
+2. Set Docker Compose values in `.env`:
+   - `FRONTEND_HOST_PORT=8088`
+   - `APP_CORS_ALLOWED_ORIGINS=http://localhost:8088`
+3. Start full stack:
+   - `docker compose up --build`
+
+Service URLs and checks:
+- Frontend: `http://localhost:8088`
+- Frontend health: `curl http://localhost:8088/`
+- Backend health (inside network): `http://backend:8080/actuator/health`
+- MySQL internal address: `mysql:3306`
+
+Important notes:
+- Native startup and full Docker startup should not run simultaneously on conflicting ports.
+- Docker frontend always builds with `VITE_API_BASE_URL=/api` for same-origin `/api` proxy routing.
+- For real production, set `APP_CORS_ALLOWED_ORIGINS` to the exact public frontend origin (scheme + host + port, no path, no trailing slash, no wildcard).
+- If frontend build variables change, rebuild the frontend image (`docker compose up --build`).
+- Data persists in the named Docker volume `careconnect360_mysql_data` until removed.
+
 ## 4. Start Backend
 - `cd backend`
 - `mvn clean compile`
